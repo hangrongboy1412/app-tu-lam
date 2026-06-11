@@ -509,5 +509,8 @@ function escapeHtml(value) {
 }
 
 function setStatus(message) {
-  statusText.textContent = message;
+  if (statusText) {
+    statusText.textContent = message;
+  }
+  console.log(message);
 }
