@@ -65,8 +65,10 @@ button:hover {
 
 .topbar{
   display:grid;
-  grid-template-columns:1fr;
-  gap:10px;
+  padding:16px 24px;
+  grid-template-columns:300px 1fr;
+  align-items:center;
+  gap:30px;
 }
 
 .topbar h1{
@@ -372,15 +374,6 @@ td.number {
 width:140px;
 height:140px;
 }
-
-.card-image{
-  width:140px;
-  height:140px;
-  overflow:hidden;
-  border-radius:12px;
-  flex-shrink:0;
-}
-
 .card-info{
   flex:1;
 }
@@ -417,9 +410,10 @@ height:140px;
     padding:10px;
   }
 
-.form-panel{
-  display:none;
-}
+  .form-panel{
+    position:static;
+    order:2;
+  }
 
   .content{
     order:1;
@@ -457,13 +451,6 @@ height:140px;
     height:auto;
     max-height:250px;
   }
-
-  .card-image img{
-    width:100%;
-    height:auto;
-    object-fit:cover;
-  }
-
   .filters{
     grid-template-columns:1fr;
   }
@@ -474,70 +461,64 @@ height:140px;
     width:100%;
   }
 }
-@media (max-width:768px){
+.card-image{
+  width:220px;
+  height:220px;
+}
+.card-image{
+  width:100%;
+  height:220px;
+  overflow:hidden;
+  border-radius:12px;
+}
 
-  .form-panel{
-    display:none !important;
-  }
+.card-image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.no-image{
+  width:100%;
+  height:200px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#eee;
+  border-radius:12px;
+  color:#666;
+}
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+  gap:0;
+  border-top:1px solid #ddd;
+  border-left:1px solid #ddd;
+}
 
-  #saveSettingsBtn,
-  #syncBtn,
-  #exportCsvBtn,
-  #pullBtn,
-  .sheet-url{
-    display:none !important;
-  }
+.card{
+  border-right:1px solid #ddd;
+  border-bottom:1px solid #ddd;
+  padding:12px;
+}
 
-  .layout{
-    grid-template-columns:1fr !important;
-    padding:10px;
-  }
+.card{
+  border-right:1px solid #000000;
+  border-bottom:1px solid #000000;
+  padding:12px;
+}
+.card-image img{
+  transition:.2s;
+}
 
-  .summary{
-    grid-template-columns:repeat(2,1fr) !important;
-  }
-
-  .filters{
-    grid-template-columns:1fr !important;
-  }
-
-  #typeFilter,
-  #fromDateFilter,
-  #toDateFilter,
-  #clearFiltersBtn{
-    display:none !important;
-  }
-
-  .cards{
-    grid-template-columns:1fr !important;
-  }
-
-  .card{
-    overflow:hidden;
-    border-radius:12px;
-  }
-
-  .card-image{
-    width:100% !important;
-    height:240px !important;
-    margin:0;
-  }
-
-  .card-image img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-  }
-
-  .card-code{
-    font-size:28px;
-  }
-
-  .card-meta{
-    font-size:17px;
-  }
-
-  .row-actions{
-    display:none !important;
-  }
+.card-image img:hover{
+  transform:scale(1.05);
+}
+.card{
+  display:flex;
+  flex-direction:column;
+  min-height:380px;
+}
+.row-actions{
+  margin-top:auto;
 }
