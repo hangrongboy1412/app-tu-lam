@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>App L&#432;u Kho</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+
+  <div>
+    <h1>App Lưu Kho</h1>
+    <p>Lưu mã số...</p>
+  </div>
+
+  <div class="top-actions">
+
+    <input
+      id="scriptUrl"
+      class="sheet-url"
+      placeholder="Google Apps Script URL">
+
+    <button id="saveSettingsBtn">
+      Lưu link
+    </button>
+
+    <button id="exportCsvBtn">
+      Xuất CSV
+    </button>
+
+    <button id="pullBtn">
+      Tải từ Sheet
+    </button>
+
+    <button id="syncBtn">
+      Đồng bộ Sheet
+    </button>
+
+  </div>
+
+  </header>
+
+  <main class="layout">
+    <section class="panel form-panel">
+      <div class="panel-title">
+        <h2 id="formTitle">Th&#234;m d&#7919; li&#7879;u</h2>
+        <button id="resetBtn" class="ghost" type="button">L&#224;m m&#7899;i</button>
+      </div>
+
+      <form id="stockForm">
+        <input id="editingId" type="hidden">
+
+        <label>
+          <span>M&#227; s&#7889;</span>
+          <input id="code" required autocomplete="off" placeholder="VD: M001">
+        </label>
+
+        <label>
+          <span>Lo&#7841;i</span>
+          <input id="type" required autocomplete="off" placeholder="VD: Nh&#7851;n, d&#226;y, v&#242;ng...">
+        </label>
+
+        <label>
+          <span>Th&#244;ng tin</span>
+          <input id="info" autocomplete="off" placeholder="VD: Resin, size, mau...">
+        </label>
+
+        <label>
+          <span>Ng&#224;y nh&#7853;p</span>
+          <input id="entryDate" required type="date">
+        </label>
+
+        <div class="grid-3">
+          <label>
+            <span>Ti&#7873;n c&#244;ng Ch&#7883; Linh</span>
+            <input id="wageA" inputmode="decimal" placeholder="0">
+          </label>
+          <label>
+            <span>Ti&#7873;n c&#244;ng KHD</span>
+            <input id="wageB" inputmode="decimal" placeholder="0">
+          </label>
+          <label>
+            <span>Ti&#7873;n c&#244;ng KLT</span>
+            <input id="wageC" inputmode="decimal" placeholder="0">
+          </label>
+        </div>
+
+        <div class="grid-2">
+          <label>
+            <span>TLH</span>
+            <input id="tlh" inputmode="decimal" placeholder="0">
+          </label>
+          <label>
+            <span>TLV</span>
+            <input id="tlv" inputmode="decimal" placeholder="0">
+          </label>
+        </div>
+
+        <label>
+  <span>Ghi chú</span>
+  <textarea id="note" rows="3" placeholder="Không bắt buộc"></textarea>
+</label>
+
+<label>
+  <span>Link ảnh</span>
+  <input id="imageUrl" placeholder="https://...">
+</label>
+
+        <button class="primary" type="submit">L&#432;u d&#7919; li&#7879;u</button>
+      </form>
+    </section>
+
+    <section class="content">
+      <section class="summary" aria-label="Th&#7889;ng k&#234;">
+        <div>
+          <span>S&#7889; h&#224;ng c&#243; m&#7863;t</span>
+          <strong id="totalRows">0</strong>
+        </div>
+        <div>
+          <span>V&#242;ng</span>
+          <strong id="totalA">0</strong>
+        </div>
+        <div>
+          <span>Nh&#7851;n</span>
+          <strong id="totalB">0</strong>
+        </div>
+        <div>
+          <span>M&#7863;t</span>
+          <strong id="totalC">0</strong>
+        </div>
+        <div>
+          <span>B&#244;ng</span>
+          <strong id="totalTlh">0</strong>
+        </div>
+        <div>
+          <span>Kh&#225;c</span>
+          <strong id="totalTlv">0</strong>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">
+          <h2>Danh s&#225;ch kho</h2>
+        </div>
+
+        <div class="filters" aria-label="B&#7897; l&#7885;c">
+          <input id="searchInput" placeholder="T&#236;m m&#227;, lo&#7841;i, th&#244;ng tin, ghi ch&#250;...">
+          <select id="typeFilter">
+            <option value="">T&#7845;t c&#7843; lo&#7841;i</option>
+          </select>
+          <label>
+            <span>T&#7915; ng&#224;y</span>
+            <input id="fromDateFilter" type="date">
+          </label>
+          <label>
+            <span>&#272;&#7871;n ng&#224;y</span>
+            <input id="toDateFilter" type="date">
+          </label>
+          <button id="clearFiltersBtn" class="ghost" type="button">X&#243;a l&#7885;c</button>
+        </div>
+
+                <div id="stockCards" class="cards"></div>
+
+        <p id="emptyState" class="empty">
+          Chưa có dữ liệu.
+        </p>
+
+      </section>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
