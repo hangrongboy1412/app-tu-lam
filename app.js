@@ -143,14 +143,21 @@ ${
   String(item.imageUrl || "").startsWith("http")
     ? `<img
   <img src="${imgUrl}">
-  const fileId = (item.imageUrl || "").match(/id=([^&]+)/)?.[1];
+ const fileId = (item.imageUrl || "").match(/id=([^&]+)/)?.[1];
 
 const imgUrl = fileId
   ? `https://lh3.googleusercontent.com/d/${fileId}=w1000`
   : "";
+
+card.innerHTML = `
+<div class="card-image">
+${
+  String(item.imageUrl || "").startsWith("http")
+    ? `<img src="${imgUrl}">`
     : `<div class="no-image">Không có ảnh</div>`
 }
 </div>
+`;
 
   <div class="card-info">
 
