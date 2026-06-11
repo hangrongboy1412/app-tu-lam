@@ -402,7 +402,19 @@ height:140px;
 .sheet-url{
   width:700px;
   border-radius:12px;
-  
+}
+@media (max-width: 768px){
+
+  .layout{
+    grid-template-columns:1fr;
+    padding:10px;
+  }
+
+  .form-panel{
+    position:static;
+    order:2;
+  }
+
   .content{
     order:1;
   }
