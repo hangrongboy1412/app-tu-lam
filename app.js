@@ -136,15 +136,30 @@ function render() {
   const card = document.createElement("div");
   card.className = "card";
 
-  const fileId = (item.imageUrl || "").match(/id=([^&]+)/)?.[1];
+let imgUrl = item.imageUrl || "";
 
-  const imgUrl = fileId
-    ? `https://lh3.googleusercontent.com/d/${fileId}=w1000`
-    : "";
+const fileId =
+  imgUrl.match(/id=([^&]+)/)?.[1] ||
+  imgUrl.match(/\/d\/([^/]+)/)?.[1];
 
-  card.innerHTML = `
-  ${
+if (fileId) {
+  imgUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+}
+
+card.innerHTML = `
+<div class="card-image">
+${
   imgUrl
+    ? `<img
+        src="${imgUrl}"
+        alt=""
+        loading="lazy"
+        onclick="showImage('${imgUrl}')"
+        style="cursor:pointer"
+      >`
+    : `<div class="no-image">Không có ảnh</div>`
+}
+</div>
     ? `<img
         src="${imgUrl}"
         alt=""
