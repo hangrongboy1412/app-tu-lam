@@ -403,6 +403,19 @@ height:140px;
   width:700px;
   border-radius:12px;
 }
+.form-panel{
+    position:static;
+    order:2;
+  }
+
+  .content{
+    order:1;
+  }
+
+  .summary{
+    grid-template-columns:repeat(2,1fr);
+  }
+
   .topbar{
     flex-direction:column;
     align-items:stretch;
