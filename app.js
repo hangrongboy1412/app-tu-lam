@@ -142,14 +142,12 @@ card.innerHTML = `
 ${
   String(item.imageUrl || "").startsWith("http")
     ? `<img
-  src="${item.imageUrl}"
-  alt=""
-  loading="lazy"
-  onclick="showImage('${item.imageUrl}')"
-  style="cursor:pointer"
-  onload="console.log('IMG OK', this.src)"
-  onerror="console.log('IMG ERROR', this.src)"
->`
+  <img src="${imgUrl}">
+  const fileId = (item.imageUrl || "").match(/id=([^&]+)/)?.[1];
+
+const imgUrl = fileId
+  ? `https://lh3.googleusercontent.com/d/${fileId}=w1000`
+  : "";
     : `<div class="no-image">Không có ảnh</div>`
 }
 </div>
