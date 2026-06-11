@@ -160,54 +160,44 @@ ${
     : `<div class="no-image">Không có ảnh</div>`
 }
 </div>
-    ? `<img
-        src="${imgUrl}"
-        alt=""
-        loading="lazy"
-        onclick="showImage('${imgUrl}')"
-        style="cursor:pointer"
-      >`
-    : `<div class="no-image">Không có ảnh</div>`
-}
-  <div class="card-info">
 
-    <div class="card-code">
-      ${escapeHtml(item.code)}
-    </div>
-
-    <div class="card-meta">
-      ${escapeHtml(item.type)} • ${formatDate(item.entryDate)}
-    </div>
-
-    <div class="card-meta">
-      Linh: ${formatNumber(item.wageA)}
-      |
-      KHD: ${formatNumber(item.wageB)}
-      |
-      KLT: ${formatNumber(item.wageC)}
-    </div>
-
-    <div class="card-meta">
-      TLH: ${formatNumber(item.tlh)}
-      |
-      TLV: ${formatNumber(item.tlv)}
-    </div>
-
-    <div class="card-meta">
-      ${escapeHtml(item.note || "")}
-    </div>
-
+<div class="card-info">
+  <div class="card-code">
+    ${escapeHtml(item.code)}
   </div>
 
-  <div class="row-actions">
-    <button data-action="edit" data-id="${item.id}">
-      Sửa
-    </button>
-
-    <button class="danger" data-action="delete" data-id="${item.id}">
-      Xóa
-    </button>
+  <div class="card-meta">
+    ${escapeHtml(item.type)} • ${formatDate(item.entryDate)}
   </div>
+
+  <div class="card-meta">
+    Linh: ${formatNumber(item.wageA)}
+    |
+    KHD: ${formatNumber(item.wageB)}
+    |
+    KLT: ${formatNumber(item.wageC)}
+  </div>
+
+  <div class="card-meta">
+    TLH: ${formatNumber(item.tlh)}
+    |
+    TLV: ${formatNumber(item.tlv)}
+  </div>
+
+  <div class="card-meta">
+    ${escapeHtml(item.note || "")}
+  </div>
+</div>
+
+<div class="row-actions">
+  <button data-action="edit" data-id="${item.id}">
+    Sửa
+  </button>
+
+  <button class="danger" data-action="delete" data-id="${item.id}">
+    Xóa
+  </button>
+</div>
 `;
     rowsEl.appendChild(card);
     card.querySelectorAll("button").forEach(btn => {
