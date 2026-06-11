@@ -13,7 +13,7 @@ const fields = {
   tlv: document.querySelector("#tlv"),
   tlh: document.querySelector("#tlh"),
   note: document.querySelector("#note"),
-  imageUrl: document.querySelector("#imageUrl"),
+  imageFile: document.querySelector("#imageFile"),
 };
 
 const form = document.querySelector("#stockForm");
@@ -49,19 +49,39 @@ scriptUrlInput.value = settings.scriptUrl || "";
 fields.entryDate.valueAsDate = new Date();
 render();
 
-form.addEventListener("submit", (event) => {
+form.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const data = readForm();
+let uploadedImage = "";
 
-  if (data.id) {
-    records = records.map((item) => (item.id === data.id ? data : item));
-    setStatus("\u0110\u00e3 c\u1eadp nh\u1eadt d\u1eef li\u1ec7u.");
-  } else {
-    data.id = crypto.randomUUID();
-    data.createdAt = new Date().toISOString();
-    records.unshift(data);
-    setStatus("\u0110\u00e3 l\u01b0u d\u1eef li\u1ec7u m\u1edbi.");
-  }
+if (fields.imageFile.files[0]) {
+
+  const previewBase64 = await new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.readAsDataURL(fields.imageFile.files[0]);
+  });
+
+const result = await uploadImageToDrive(
+  fields.imageFile.files[0]
+);
+
+uploadedImage = result.imageUrl || "";
+
+console.log("uploadedImage =", uploadedImage);
+}
+
+console.log("uploadedImage =", uploadedImage);
+
+const data = readForm(uploadedImage);
+
+ if (data.id) {
+  records = records.map(item =>
+    item.id === data.id ? data : item
+  );
+} else {
+  data.id = crypto.randomUUID();
+  records.unshift(data);
+}
 
   saveRecords();
   resetForm();
@@ -79,13 +99,13 @@ pullBtn.addEventListener("click", pullFromSheet);
 saveSettingsBtn.addEventListener("click", saveSettings);
 syncBtn.addEventListener("click", syncToSheet);
 
-function readForm() {
+function readForm(imageUrl = "") {
   return {
     id: fields.editingId.value,
     code: fields.code.value.trim(),
     type: fields.type.value.trim(),
     info: fields.info.value.trim(),
-    imageUrl: fields.imageUrl.value.trim(),
+    imageUrl: imageUrl,
     entryDate: fields.entryDate.value,
     wageA: parseMoney(fields.wageA.value),
     wageB: parseMoney(fields.wageB.value),
@@ -93,13 +113,12 @@ function readForm() {
     tlv: parseMoney(fields.tlv.value),
     tlh: parseMoney(fields.tlh.value),
     note: fields.note.value.trim(),
-    updatedAt: new Date().toISOString(),
   };
 }
 
 function resetForm() {
   form.reset();
-  fields.imageUrl.value = "";
+  fields.imageFile.value = "";
   fields.editingId.value = "";
   fields.entryDate.valueAsDate = new Date();
   formTitle.textContent = "Th\u00eam d\u1eef li\u1ec7u";
@@ -119,9 +138,21 @@ function render() {
     card.className = "card";
 
 card.innerHTML = `
-  <div class="card-image">
-    <img src="${item.imageUrl || "https://via.placeholder.com/150"}">
-  </div>
+<div class="card-image">
+${
+  String(item.imageUrl || "").startsWith("http")
+    ? `<img
+  src="${item.imageUrl}"
+  alt=""
+  loading="lazy"
+  onclick="showImage('${item.imageUrl}')"
+  style="cursor:pointer"
+  onload="console.log('IMG OK', this.src)"
+  onerror="console.log('IMG ERROR', this.src)"
+>`
+    : `<div class="no-image">Không có ảnh</div>`
+}
+</div>
 
   <div class="card-info">
 
@@ -294,7 +325,6 @@ function handleRowAction(event) {
     fields.code.value = item.code;
     fields.type.value = item.type;
     fields.info.value = item.info || "";
-    fields.imageUrl.value = item.imageUrl || "";
     fields.entryDate.value = item.entryDate;
     fields.wageA.value = item.wageA || "";
     fields.wageB.value = item.wageB || "";
@@ -512,6 +542,51 @@ function setStatus(message) {
   if (statusText) {
     statusText.textContent = message;
   }
-
   console.log(message);
 }
+async function uploadImageToDrive(file) {
+
+  const scriptUrl = scriptUrlInput.value.trim();
+
+  const base64 = await new Promise((resolve) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      resolve(reader.result.split(",")[1]);
+    };
+
+    reader.readAsDataURL(file);
+  });
+
+const res = await fetch(scriptUrl, {
+  method: "POST",
+  headers: {
+    "Content-Type": "text/plain;charset=utf-8"
+  },
+  body: JSON.stringify({
+    action: "uploadImage",
+    fileName: file.name,
+    mimeType: file.type,
+    base64: base64
+  })
+});
+
+const result = await res.json();
+
+console.log("result =", result);
+
+return result;
+}
+function showImage(url){
+  const modal = document.getElementById("imgModal");
+  const img = document.getElementById("imgPreview");
+
+  img.src = url;
+  modal.style.display = "flex";
+}
+
+document.addEventListener("click", (e)=>{
+  if(e.target.id === "imgModal"){
+    e.target.style.display = "none";
+  }
+});
