@@ -419,10 +419,9 @@ height:140px;
     padding:10px;
   }
 
-  .form-panel{
-    position:static;
-    order:2;
-  }
+.form-panel{
+  display:none;
+}
 
   .content{
     order:1;
@@ -476,58 +475,4 @@ height:140px;
   .filters button{
     width:100%;
   }
-}
-@media (max-width: 768px){
-
-  .topbar{
-    flex-direction:column;
-    align-items:stretch;
-    gap:12px;
-  }
-
-  .top-actions{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-  }
-
-  .sheet-url{
-    width:100%;
-    order:-1;
-  }
-
-  .top-actions button{
-    flex:1;
-    min-width:120px;
-  }
-
-  .layout{
-    grid-template-columns:1fr;
-  }
-
-  .form-panel{
-    position:static;
-  }
-
-  .summary{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .filters{
-    grid-template-columns:1fr;
-  }
-
-  .card{
-    grid-template-columns:1fr;
-    text-align:center;
-  }
-
-  .card-image{
-    margin:auto;
-  }
-
-  .row-actions{
-    justify-content:center;
-  }
-
 }
