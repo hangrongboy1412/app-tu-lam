@@ -405,22 +405,14 @@ height:140px;
 }
 @media (max-width: 768px){
 
-  .form-panel{
-    display:none !important;
-  }
-
-  .top-actions{
-    display:none !important;
-  }
-}
-
   .layout{
     grid-template-columns:1fr;
     padding:10px;
   }
 
   .form-panel{
-    display:none !important;
+    position:static;
+    order:2;
   }
 
   .content{
@@ -529,3 +521,4 @@ height:140px;
 }
 .row-actions{
   margin-top:auto;
+}
