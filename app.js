@@ -133,32 +133,27 @@ function render() {
 
   for (const item of filtered) {
 
-    const card = document.createElement("div");
+  const card = document.createElement("div");
+  card.className = "card";
 
-    card.className = "card";
+  const fileId = (item.imageUrl || "").match(/id=([^&]+)/)?.[1];
 
-card.innerHTML = `
-<div class="card-image">
-${
-  String(item.imageUrl || "").startsWith("http")
+  const imgUrl = fileId
+    ? `https://lh3.googleusercontent.com/d/${fileId}=w1000`
+    : "";
+
+  card.innerHTML = `
+  ${
+  imgUrl
     ? `<img
-  <img src="${imgUrl}">
- const fileId = (item.imageUrl || "").match(/id=([^&]+)/)?.[1];
-
-const imgUrl = fileId
-  ? `https://lh3.googleusercontent.com/d/${fileId}=w1000`
-  : "";
-
-card.innerHTML = `
-<div class="card-image">
-${
-  String(item.imageUrl || "").startsWith("http")
-    ? `<img src="${imgUrl}">`
+        src="${imgUrl}"
+        alt=""
+        loading="lazy"
+        onclick="showImage('${imgUrl}')"
+        style="cursor:pointer"
+      >`
     : `<div class="no-image">Không có ảnh</div>`
 }
-</div>
-`;
-
   <div class="card-info">
 
     <div class="card-code">
