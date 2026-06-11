@@ -512,5 +512,6 @@ function setStatus(message) {
   if (statusText) {
     statusText.textContent = message;
   }
+
   console.log(message);
 }
