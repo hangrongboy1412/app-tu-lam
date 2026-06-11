@@ -105,7 +105,10 @@
 
 <label>
   <span>Link ảnh</span>
-  <input id="imageUrl" placeholder="https://...">
+  <input
+  type="file"
+  id="imageFile"
+  accept="image/*">
 </label>
 
         <button class="primary" type="submit">L&#432;u d&#7919; li&#7879;u</button>
@@ -172,5 +175,11 @@
   </main>
 
   <script src="app.js"></script>
+<div id="imgModal" class="img-modal">
+  <img id="imgPreview">
+</div>
 </body>
 </html>
+<div id="imgModal" class="img-modal">
+  <img id="imgPreview">
+</div>
