@@ -66,8 +66,7 @@ button:hover {
 .topbar{
   display:grid;
   grid-template-columns:1fr;
-  gap:12px;
-  padding:12px;
+  gap:10px;
 }
 
 .topbar h1{
@@ -473,5 +472,72 @@ height:140px;
   .filters select,
   .filters button{
     width:100%;
+  }
+}
+@media (max-width:768px){
+
+  .form-panel{
+    display:none !important;
+  }
+
+  #saveSettingsBtn,
+  #syncBtn,
+  #exportCsvBtn,
+  #pullBtn,
+  .sheet-url{
+    display:none !important;
+  }
+
+  .layout{
+    grid-template-columns:1fr !important;
+    padding:10px;
+  }
+
+  .summary{
+    grid-template-columns:repeat(2,1fr) !important;
+  }
+
+  .filters{
+    grid-template-columns:1fr !important;
+  }
+
+  #typeFilter,
+  #fromDateFilter,
+  #toDateFilter,
+  #clearFiltersBtn{
+    display:none !important;
+  }
+
+  .cards{
+    grid-template-columns:1fr !important;
+  }
+
+  .card{
+    overflow:hidden;
+    border-radius:12px;
+  }
+
+  .card-image{
+    width:100% !important;
+    height:240px !important;
+    margin:0;
+  }
+
+  .card-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+
+  .card-code{
+    font-size:28px;
+  }
+
+  .card-meta{
+    font-size:17px;
+  }
+
+  .row-actions{
+    display:none !important;
   }
 }
