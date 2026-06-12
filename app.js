@@ -30,6 +30,7 @@ const exportCsvBtn = document.querySelector("#exportCsvBtn");
 const syncBtn = document.querySelector("#syncBtn");
 const settingsBtn = document.querySelector("#settingsBtn");
 const pullBtn = document.querySelector("#pullBtn");
+const statusText = document.querySelector("#statusText");
 const totals = {
   rows: document.querySelector("#totalRows"),
   a: document.querySelector("#totalA"),
