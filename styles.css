@@ -709,3 +709,32 @@ body{
 .card{
   min-height:380px;
 }
+@media (max-width:768px){
+
+  .cards{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:8px;
+  }
+
+}
+@media (max-width:768px){
+
+  .card-image{
+    height:120px;
+  }
+
+  .card-code{
+    font-size:18px;
+  }
+
+  .card{
+    min-height:auto;
+    padding:8px;
+  }
+
+  .card-meta{
+    font-size:12px;
+  }
+
+}
