@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="vi">
 <head>
+  <link rel="icon"
+href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💎</text></svg>">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>App L&#432;u Kho</title>
@@ -10,19 +12,13 @@
 <header class="topbar">
 
   <div>
-    <h1>App Lưu Kho</h1>
-    <p>Lưu mã số...</p>
+    <h1>💎𝒌𝒉𝒐 𝒎𝒂̂̃𝒖💎</h1>
   </div>
 
   <div class="top-actions">
 
-    <input
-      id="scriptUrl"
-      class="sheet-url"
-      placeholder="Google Apps Script URL">
-
-    <button id="saveSettingsBtn">
-      Lưu link
+   <button id="settingsBtn">
+  ⚙️ Cài đặt
     </button>
 
     <button id="exportCsvBtn">
@@ -74,15 +70,15 @@
 
         <div class="grid-3">
           <label>
-            <span>Ti&#7873;n c&#244;ng Ch&#7883; Linh</span>
+            <span>Linh</span>
             <input id="wageA" inputmode="decimal" placeholder="0">
           </label>
           <label>
-            <span>Ti&#7873;n c&#244;ng KHD</span>
+            <span>KHD</span>
             <input id="wageB" inputmode="decimal" placeholder="0">
           </label>
           <label>
-            <span>Ti&#7873;n c&#244;ng KLT</span>
+            <span>KLT</span>
             <input id="wageC" inputmode="decimal" placeholder="0">
           </label>
         </div>
@@ -104,15 +100,35 @@
 </label>
 
 <label>
-  <span>Link ảnh</span>
-  <input
-  type="file"
-  id="imageFile"
-  accept="image/*">
+  <span>Ảnh sản phẩm</span>
 </label>
 
-        <button class="primary" type="submit">L&#432;u d&#7919; li&#7879;u</button>
-      </form>
+<label for="imageFile" class="upload-box">
+
+  <input
+    type="file"
+    id="imageFile"
+    accept="image/*">
+
+<div class="upload-content">
+  <div class="upload-icon">📷</div>
+
+  <div id="uploadText">
+    Chọn hoặc kéo ảnh vào
+  </div>
+
+</div>
+
+</label>
+<div class="save-btn-wrap">
+  <button class="primary" type="submit">
+    Lưu dữ liệu
+  </button>
+
+  <div id="toast"></div>
+</div>
+
+</form>
     </section>
 
     <section class="content">
@@ -163,23 +179,16 @@
           </label>
           <button id="clearFiltersBtn" class="ghost" type="button">X&#243;a l&#7885;c</button>
         </div>
-
                 <div id="stockCards" class="cards"></div>
-
         <p id="emptyState" class="empty">
           Chưa có dữ liệu.
         </p>
-
       </section>
     </section>
   </main>
-
-  <script src="app.js"></script>
-<div id="imgModal" class="img-modal">
+  <script src="app.js"></script> 
+<div id="imgModal" class="img-modal" onclick="closeImage()">
   <img id="imgPreview">
 </div>
 </body>
 </html>
-<div id="imgModal" class="img-modal">
-  <img id="imgPreview">
-</div>
