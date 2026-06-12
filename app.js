@@ -52,14 +52,15 @@ render();
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
-  if (isSaving) return;
+if (isSaving) return;
 
-  isSaving = true;
-console.log("ĐANG LƯU");
-alert("ĐANG LƯU");
-  const submitBtn = form.querySelector(
-    'button[type="submit"]'
-  );
+isSaving = true;
+
+showToast("⏳ Đang lưu...");
+
+const submitBtn = form.querySelector(
+  'button[type="submit"]'
+);
 
   submitBtn.disabled = true;
   submitBtn.textContent = "Đang lưu...";
@@ -103,10 +104,12 @@ fields.imageFile.value = "";
 
 resetForm();
     render();
+    showToast("✅ Đã lưu thành công");
 
     submitBtn.textContent = "Đã lưu ✓";
 
   } catch (error) {
+    showToast("❌ Lưu thất bại");
 
     console.error(error);
     submitBtn.textContent = "Lỗi!";
