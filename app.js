@@ -1,6 +1,6 @@
 const STORAGE_KEY = "luu-kho-records-v1";
 const SETTINGS_KEY = "luu-kho-settings-v1";
-
+let isSaving = false;
 const fields = {
   editingId: document.querySelector("#editingId"),
   code: document.querySelector("#code"),
@@ -29,10 +29,8 @@ const clearFiltersBtn = document.querySelector("#clearFiltersBtn");
 const exportCsvBtn = document.querySelector("#exportCsvBtn");
 const pullBtn = document.querySelector("#pullBtn");
 const syncBtn = document.querySelector("#syncBtn");
-const scriptUrlInput = document.querySelector("#scriptUrl");
-const saveSettingsBtn = document.querySelector("#saveSettingsBtn");
 const statusText = document.querySelector("#statusText");
-
+const settingsBtn = document.querySelector("#settingsBtn");
 const totals = {
   rows: document.querySelector("#totalRows"),
   a: document.querySelector("#totalA"),
@@ -44,50 +42,76 @@ const totals = {
 
 let records = loadRecords();
 let settings = loadSettings();
+if (!settings.scriptUrl) {
 
-scriptUrlInput.value = settings.scriptUrl || "";
+  const url = prompt(
+    "Nhập Apps Script URL"
+  );
+
+  if (url) {
+
+    settings.scriptUrl = url.trim();
+
+    localStorage.setItem(
+      SETTINGS_KEY,
+      JSON.stringify(settings)
+    );
+  }
+}
+
+let scriptUrl = settings.scriptUrl || "";
 fields.entryDate.valueAsDate = new Date();
 render();
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
-let uploadedImage = "";
 
-if (fields.imageFile.files[0]) {
+  if (isSaving) return;
+  isSaving = true;
 
-  const previewBase64 = await new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.readAsDataURL(fields.imageFile.files[0]);
-  });
+ showToast("⏳ Đang lưu...", 30000);
 
-const result = await uploadImageToDrive(
-  fields.imageFile.files[0]
-);
+  try {
 
-uploadedImage = result.imageUrl || "";
+    let uploadedImage = "";
 
-console.log("uploadedImage =", uploadedImage);
-}
+    if (fields.imageFile.files[0]) {
 
-console.log("uploadedImage =", uploadedImage);
+      const result = await uploadImageToDrive(
+        fields.imageFile.files[0]
+      );
 
-const data = readForm(uploadedImage);
+      uploadedImage = result.imageUrl || "";
+    }
 
- if (data.id) {
-  records = records.map(item =>
-    item.id === data.id ? data : item
-  );
-} else {
-  data.id = crypto.randomUUID();
-  records.unshift(data);
-}
+    const data = readForm(uploadedImage);
 
-  saveRecords();
-  resetForm();
-  render();
+    if (data.id) {
+      records = records.map(item =>
+        item.id === data.id ? data : item
+      );
+    } else {
+      data.id = crypto.randomUUID();
+      records.unshift(data);
+    }
+
+    saveRecords();
+    resetForm();
+    render();
+console.log("SAVE OK");
+showToast("✅ Đã lưu thành công", 2000);
+
+  } catch (error) {
+
+    console.error(error);
+    showToast("❌ Lưu thất bại");
+
+  } finally {
+
+    isSaving = false;
+
+  }
 });
-
 resetBtn.addEventListener("click", resetForm);
 searchInput.addEventListener("input", render);
 typeFilter.addEventListener("change", render);
@@ -96,7 +120,7 @@ toDateFilter.addEventListener("change", render);
 clearFiltersBtn.addEventListener("click", clearFilters);
 exportCsvBtn.addEventListener("click", exportCsv);
 pullBtn.addEventListener("click", pullFromSheet);
-saveSettingsBtn.addEventListener("click", saveSettings);
+settingsBtn.addEventListener("click", saveSettings);
 syncBtn.addEventListener("click", syncToSheet);
 
 function readForm(imageUrl = "") {
@@ -358,9 +382,24 @@ function loadRecords() {
 }
 
 function saveSettings() {
-  settings.scriptUrl = scriptUrlInput.value.trim();
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  setStatus("\u0110\u00e3 l\u01b0u link Google Sheet.");
+
+  const url = prompt(
+    "Nhập Apps Script URL",
+    settings.scriptUrl || ""
+  );
+
+  if (!url) return;
+
+  settings.scriptUrl = url.trim();
+
+  localStorage.setItem(
+    SETTINGS_KEY,
+    JSON.stringify(settings)
+  );
+
+  scriptUrl = settings.scriptUrl;
+
+  showToast("✅ Đã lưu URL");
 }
 
 function loadSettings() {
@@ -372,7 +411,7 @@ function loadSettings() {
 }
 
 async function syncToSheet() {
-  const scriptUrl = scriptUrlInput.value.trim();
+(settings.scriptUrl || "").trim()
   if (!scriptUrl) {
     setStatus("Ch\u01b0a c\u00f3 link Google Apps Script.");
     return;
@@ -393,7 +432,7 @@ async function syncToSheet() {
 }
 
 function pullFromSheet() {
-  const scriptUrl = scriptUrlInput.value.trim();
+(settings.scriptUrl || "").trim()
   if (!scriptUrl) {
     setStatus("Ch\u01b0a c\u00f3 link Google Apps Script.");
     return;
@@ -538,15 +577,26 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
-function setStatus(message) {
+function setStatus(message, time = 2000) {
+
   if (statusText) {
+
     statusText.textContent = message;
+
+    clearTimeout(statusText.timer);
+
+    statusText.timer = setTimeout(() => {
+      statusText.textContent = "";
+    }, time);
+
   }
+
   console.log(message);
 }
+
 async function uploadImageToDrive(file) {
 
-  const scriptUrl = scriptUrlInput.value.trim();
+(settings.scriptUrl || "").trim()
 
   const base64 = await new Promise((resolve) => {
     const reader = new FileReader();
@@ -589,4 +639,36 @@ document.addEventListener("click", (e)=>{
   if(e.target.id === "imgModal"){
     e.target.style.display = "none";
   }
+});
+function showToast(text, time = 3000){
+  const toast = document.getElementById("toast");
+
+  toast.textContent = text;
+  toast.style.display = "flex";
+
+  clearTimeout(toast.timer);
+
+  toast.timer = setTimeout(() => {
+    toast.style.display = "none";
+  }, time);
+}
+
+function showImage(src){
+  document.getElementById("imgPreview").src = src;
+  document.getElementById("imgModal").style.display = "flex";
+}
+
+function closeImage(){
+  document.getElementById("imgModal").style.display = "none";
+}
+fields.imageFile.addEventListener("change", () => {
+
+  const uploadText =
+    document.getElementById("uploadText");
+
+  uploadText.textContent =
+    fields.imageFile.files.length
+      ? "✅ " + fields.imageFile.files[0].name
+      : "Chọn hoặc kéo ảnh vào";
+
 });
