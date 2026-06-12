@@ -27,9 +27,9 @@ const fromDateFilter = document.querySelector("#fromDateFilter");
 const toDateFilter = document.querySelector("#toDateFilter");
 const clearFiltersBtn = document.querySelector("#clearFiltersBtn");
 const exportCsvBtn = document.querySelector("#exportCsvBtn");
-const pullBtn = document.querySelector("#pullBtn");
 const syncBtn = document.querySelector("#syncBtn");
 const settingsBtn = document.querySelector("#settingsBtn");
+const pullBtn = document.querySelector("#pullBtn");
 const totals = {
   rows: document.querySelector("#totalRows"),
   a: document.querySelector("#totalA"),
@@ -112,10 +112,16 @@ typeFilter.addEventListener("change", render);
 fromDateFilter.addEventListener("change", render);
 toDateFilter.addEventListener("change", render);
 clearFiltersBtn.addEventListener("click", clearFilters);
-exportCsvBtn.addEventListener("click", exportCsv);
+if (exportCsvBtn) {
+  exportCsvBtn.addEventListener("click", exportCsv);
+}
+
+if (syncBtn) {
+  syncBtn.addEventListener("click", syncToSheet);
+}
 pullBtn.addEventListener("click", pullFromSheet);
 settingsBtn.addEventListener("click", saveSettings);
-syncBtn.addEventListener("click", syncToSheet);
+
 
 function readForm(imageUrl = "") {
   return {
@@ -446,9 +452,6 @@ const scriptUrl = (settings.scriptUrl || "").trim();
       saveRecords();
       resetForm();
       render();
-      window.addEventListener("load", () => {
-  pullFromSheet();
-});
       setStatus("\u0110\u00e3 t\u1ea3i d\u1eef li\u1ec7u t\u1eeb Sheet.");
     })
     .catch(() => {
