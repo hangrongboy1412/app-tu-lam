@@ -536,3 +536,15 @@ height:140px;
   max-width:95%;
   max-height:95%;
 }
+#toast{
+  position:fixed;
+  top:20px;
+  right:20px;
+  background:#196b5b;
+  color:#fff;
+  padding:12px 18px;
+  border-radius:10px;
+  display:none;
+  z-index:99999;
+  box-shadow:0 4px 20px rgba(0,0,0,.2);
+}
