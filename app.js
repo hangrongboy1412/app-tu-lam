@@ -1,6 +1,6 @@
 const STORAGE_KEY = "luu-kho-records-v1";
 const SETTINGS_KEY = "luu-kho-settings-v1";
-let isSaving = false;
+
 const fields = {
   editingId: document.querySelector("#editingId"),
   code: document.querySelector("#code"),
@@ -51,79 +51,43 @@ render();
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
+let uploadedImage = "";
 
-if (isSaving) return;
+if (fields.imageFile.files[0]) {
 
-isSaving = true;
+  const previewBase64 = await new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.readAsDataURL(fields.imageFile.files[0]);
+  });
 
-showToast("⏳ Đang lưu...");
-
-const submitBtn = form.querySelector(
-  'button[type="submit"]'
+const result = await uploadImageToDrive(
+  fields.imageFile.files[0]
 );
 
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Đang lưu...";
+uploadedImage = result.imageUrl || "";
 
-  try {
-
-    let uploadedImage = "";
-
-    if (fields.imageFile.files[0]) {
-
-      const result = await uploadImageToDrive(
-        fields.imageFile.files[0]
-      );
-
-      uploadedImage = result.imageUrl || "";
-    }
-
- let currentImage = uploadedImage;
-
-if (!currentImage && fields.editingId.value) {
-  const old = records.find(
-    x => x.id === fields.editingId.value
-  );
-  currentImage = old?.imageUrl || "";
+console.log("uploadedImage =", uploadedImage);
 }
 
-const data = readForm(currentImage);
-    if (data.id) {
-      records = records.map(item =>
-        item.id === data.id ? data : item
-      );
-    } else {
-      data.id = crypto.randomUUID();
-      records.unshift(data);
-    }
+console.log("uploadedImage =", uploadedImage);
 
-    saveRecords();
-   saveRecords();
+const data = readForm(uploadedImage);
 
-fields.imageFile.value = "";
+ if (data.id) {
+  records = records.map(item =>
+    item.id === data.id ? data : item
+  );
+} else {
+  data.id = crypto.randomUUID();
+  records.unshift(data);
+}
 
-resetForm();
-    render();
-    showToast("✅ Đã lưu thành công");
-
-    submitBtn.textContent = "Đã lưu ✓";
-
-  } catch (error) {
-    showToast("❌ Lưu thất bại");
-
-    console.error(error);
-    submitBtn.textContent = "Lỗi!";
-
-  } finally {
-
-    setTimeout(() => {
-      submitBtn.disabled = false;
-      submitBtn.textContent = "Lưu dữ liệu";
-      isSaving = false;
-    }, 1500);
-
-  }
+  saveRecords();
+  resetForm();
+  render();
 });
+
 resetBtn.addEventListener("click", resetForm);
 searchInput.addEventListener("input", render);
 typeFilter.addEventListener("change", render);
@@ -496,6 +460,7 @@ function normalizePulledRecord(item) {
     tlv: Number(item.tlv || 0),
     tlh: Number(item.tlh || 0),
     note: String(item.note || ""),
+    imageUrl: String(item.imageUrl || ""),
     updatedAt: item.updatedAt || new Date().toISOString(),
   };
 }
@@ -625,15 +590,3 @@ document.addEventListener("click", (e)=>{
     e.target.style.display = "none";
   }
 });
-function showToast(text){
-  const toast = document.getElementById("toast");
-
-  toast.textContent = text;
-  toast.style.display = "block";
-
-  clearTimeout(toast.timer);
-
-  toast.timer = setTimeout(()=>{
-    toast.style.display = "none";
-  },2000);
-}
