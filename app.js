@@ -1,6 +1,6 @@
 const STORAGE_KEY = "luu-kho-records-v1";
 const SETTINGS_KEY = "luu-kho-settings-v1";
-
+let isSaving = false;
 const fields = {
   editingId: document.querySelector("#editingId"),
   code: document.querySelector("#code"),
@@ -51,43 +51,75 @@ render();
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
-let uploadedImage = "";
 
-if (fields.imageFile.files[0]) {
+  if (isSaving) return;
 
-  const previewBase64 = await new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.readAsDataURL(fields.imageFile.files[0]);
-  });
+  isSaving = true;
 
-const result = await uploadImageToDrive(
-  fields.imageFile.files[0]
-);
-
-uploadedImage = result.imageUrl || "";
-
-console.log("uploadedImage =", uploadedImage);
-}
-
-console.log("uploadedImage =", uploadedImage);
-
-const data = readForm(uploadedImage);
-
- if (data.id) {
-  records = records.map(item =>
-    item.id === data.id ? data : item
+  const submitBtn = form.querySelector(
+    'button[type="submit"]'
   );
-} else {
-  data.id = crypto.randomUUID();
-  records.unshift(data);
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Đang lưu...";
+
+  try {
+
+    let uploadedImage = "";
+
+    if (fields.imageFile.files[0]) {
+
+      const result = await uploadImageToDrive(
+        fields.imageFile.files[0]
+      );
+
+      uploadedImage = result.imageUrl || "";
+    }
+
+ let currentImage = uploadedImage;
+
+if (!currentImage && fields.editingId.value) {
+  const old = records.find(
+    x => x.id === fields.editingId.value
+  );
+  currentImage = old?.imageUrl || "";
 }
 
-  saveRecords();
-  resetForm();
-  render();
-});
+const data = readForm(currentImage);
+    if (data.id) {
+      records = records.map(item =>
+        item.id === data.id ? data : item
+      );
+    } else {
+      data.id = crypto.randomUUID();
+      records.unshift(data);
+    }
 
+    saveRecords();
+   saveRecords();
+
+fields.imageFile.value = "";
+
+resetForm();
+    render();
+
+    submitBtn.textContent = "Đã lưu ✓";
+
+  } catch (error) {
+
+    console.error(error);
+    submitBtn.textContent = "Lỗi!";
+
+  } finally {
+
+    setTimeout(() => {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Lưu dữ liệu";
+      isSaving = false;
+    }, 1500);
+
+  }
+});
 resetBtn.addEventListener("click", resetForm);
 searchInput.addEventListener("input", render);
 typeFilter.addEventListener("change", render);
@@ -460,7 +492,6 @@ function normalizePulledRecord(item) {
     tlv: Number(item.tlv || 0),
     tlh: Number(item.tlh || 0),
     note: String(item.note || ""),
-    imageUrl: String(item.imageUrl || ""),
     updatedAt: item.updatedAt || new Date().toISOString(),
   };
 }
