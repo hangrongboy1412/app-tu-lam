@@ -55,7 +55,8 @@ form.addEventListener("submit", async (event) => {
   if (isSaving) return;
 
   isSaving = true;
-
+console.log("ĐANG LƯU");
+alert("ĐANG LƯU");
   const submitBtn = form.querySelector(
     'button[type="submit"]'
   );
