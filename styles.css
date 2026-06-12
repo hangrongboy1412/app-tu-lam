@@ -674,14 +674,6 @@ body{
     display:none;
   }
 
-}@media (max-width:768px){
-
-  #exportCsvBtn,
-  #syncBtn,
-  #pullBtn{
-    display:none;
-  }
-
 }
 @media (max-width:768px){
 
@@ -713,4 +705,7 @@ body{
   box-shadow:
     0 0 0 1px rgba(25,107,91,.15),
     0 4px 15px rgba(0,0,0,.08);
+}
+.card{
+  min-height:380px;
 }
