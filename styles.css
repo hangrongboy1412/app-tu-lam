@@ -8,7 +8,6 @@
   --primary-dark: #105044;
   --accent: #a64f2a;
   --warn: #b72727;
-  --shadow: 0 14px 40px rgba(24, 38, 31, 0.08);
 }
 
 * {
@@ -132,7 +131,6 @@ button:hover {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
-  box-shadow: var(--shadow);
 }
 
 .form-panel {
@@ -494,13 +492,6 @@ height:140px;
   border-radius:12px;
   color:#666;
 }
-.cards{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
-  gap:0;
-  border-top:1px solid #ddd;
-  border-left:1px solid #ddd;
-}
 
 .card{
   border-right:1px solid #ddd;
@@ -652,4 +643,74 @@ body{
   gap:10px;
 
   margin-left:auto;
+}
+@media (max-width:768px){
+
+  .form-panel{
+    display:none;
+  }
+
+  .form-panel.show{
+    display:block;
+  }
+
+}
+@media (max-width:768px){
+  .form-panel{
+    display:none;
+  }
+}
+@media (max-width:768px){
+
+  .summary{
+    display:none;
+  }
+
+}
+@media (max-width:768px){
+
+  #exportCsvBtn,
+  #syncBtn{
+    display:none;
+  }
+
+}@media (max-width:768px){
+
+  #exportCsvBtn,
+  #syncBtn,
+  #pullBtn{
+    display:none;
+  }
+
+}
+@media (max-width:768px){
+
+  .topbar{
+    flex-direction:row;
+    justify-content:space-between;
+    align-items:center;
+  }
+
+  .topbar h1{
+    font-size:20px;
+  }
+}
+@media (max-width:768px){
+  #fromDateFilter,
+  #toDateFilter{
+    display:none;
+  }
+
+  label:has(#fromDateFilter),
+  label:has(#toDateFilter){
+    display:none;
+  }
+}
+.card{
+  border:1px solid #196b5b;
+  border-radius:12px;
+
+  box-shadow:
+    0 0 0 1px rgba(25,107,91,.15),
+    0 4px 15px rgba(0,0,0,.08);
 }
