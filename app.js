@@ -29,7 +29,6 @@ const clearFiltersBtn = document.querySelector("#clearFiltersBtn");
 const exportCsvBtn = document.querySelector("#exportCsvBtn");
 const pullBtn = document.querySelector("#pullBtn");
 const syncBtn = document.querySelector("#syncBtn");
-const statusText = document.querySelector("#statusText");
 const settingsBtn = document.querySelector("#settingsBtn");
 const totals = {
   rows: document.querySelector("#totalRows"),
@@ -68,9 +67,6 @@ form.addEventListener("submit", async (event) => {
 
   if (isSaving) return;
   isSaving = true;
-
- showToast("⏳ Đang lưu...", 30000);
-
   try {
 
     let uploadedImage = "";
@@ -99,8 +95,6 @@ form.addEventListener("submit", async (event) => {
     resetForm();
     render();
 console.log("SAVE OK");
-showToast("✅ Đã lưu thành công", 2000);
-
   } catch (error) {
 
     console.error(error);
@@ -411,7 +405,7 @@ function loadSettings() {
 }
 
 async function syncToSheet() {
-(settings.scriptUrl || "").trim()
+const scriptUrl = (settings.scriptUrl || "").trim();
   if (!scriptUrl) {
     setStatus("Ch\u01b0a c\u00f3 link Google Apps Script.");
     return;
@@ -432,7 +426,7 @@ async function syncToSheet() {
 }
 
 function pullFromSheet() {
-(settings.scriptUrl || "").trim()
+const scriptUrl = (settings.scriptUrl || "").trim();
   if (!scriptUrl) {
     setStatus("Ch\u01b0a c\u00f3 link Google Apps Script.");
     return;
@@ -452,6 +446,9 @@ function pullFromSheet() {
       saveRecords();
       resetForm();
       render();
+      window.addEventListener("load", () => {
+  pullFromSheet();
+});
       setStatus("\u0110\u00e3 t\u1ea3i d\u1eef li\u1ec7u t\u1eeb Sheet.");
     })
     .catch(() => {
@@ -596,7 +593,7 @@ function setStatus(message, time = 2000) {
 
 async function uploadImageToDrive(file) {
 
-(settings.scriptUrl || "").trim()
+const scriptUrl = (settings.scriptUrl || "").trim();
 
   const base64 = await new Promise((resolve) => {
     const reader = new FileReader();
@@ -627,14 +624,6 @@ console.log("result =", result);
 
 return result;
 }
-function showImage(url){
-  const modal = document.getElementById("imgModal");
-  const img = document.getElementById("imgPreview");
-
-  img.src = url;
-  modal.style.display = "flex";
-}
-
 document.addEventListener("click", (e)=>{
   if(e.target.id === "imgModal"){
     e.target.style.display = "none";
