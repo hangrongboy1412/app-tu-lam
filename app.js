@@ -14,6 +14,7 @@ const fields = {
   tlh: document.querySelector("#tlh"),
   note: document.querySelector("#note"),
   imageFile: document.querySelector("#imageFile"),
+  status: document.querySelector("#status"),
 };
 
 const form = document.querySelector("#stockForm");
@@ -95,7 +96,6 @@ form.addEventListener("submit", async (event) => {
     saveRecords();
     resetForm();
     render();
-console.log("SAVE OK");
   } catch (error) {
 
     console.error(error);
@@ -113,16 +113,18 @@ typeFilter.addEventListener("change", render);
 fromDateFilter.addEventListener("change", render);
 toDateFilter.addEventListener("change", render);
 clearFiltersBtn.addEventListener("click", clearFilters);
-if (exportCsvBtn) {
-  exportCsvBtn.addEventListener("click", exportCsv);
-}
-
-if (syncBtn) {
-  syncBtn.addEventListener("click", syncToSheet);
-}
+exportCsvBtn?.addEventListener("click", exportCsv);
+syncBtn?.addEventListener("click", syncToSheet);
 pullBtn.addEventListener("click", pullFromSheet);
 settingsBtn.addEventListener("click", saveSettings);
+rowsEl.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-action]");
+  if (!btn) return;
 
+  handleRowAction({
+    currentTarget: btn
+  });
+});
 
 function readForm(imageUrl = "") {
   return {
@@ -138,6 +140,7 @@ function readForm(imageUrl = "") {
     tlv: parseMoney(fields.tlv.value),
     tlh: parseMoney(fields.tlh.value),
     note: fields.note.value.trim(),
+    status: fields.status.value,
   };
 }
 
@@ -172,8 +175,6 @@ ${
   loading="lazy"
   onclick="showImage('${item.imageUrl}')"
   style="cursor:pointer"
-  onload="console.log('IMG OK', this.src)"
-  onerror="console.log('IMG ERROR', this.src)"
 >`
     : `<div class="no-image">Không có ảnh</div>`
 }
@@ -184,7 +185,9 @@ ${
     <div class="card-code">
       ${escapeHtml(item.code)}
     </div>
-
+<div class="card-status ${item.status || "pending"}">
+  ${getStatusText(item.status)}
+</div>
     <div class="card-meta">
       ${escapeHtml(item.type)} • ${formatDate(item.entryDate)}
     </div>
@@ -220,13 +223,7 @@ ${
   </div>
 `;
     rowsEl.appendChild(card);
-    card.querySelectorAll("button").forEach(btn => {
-  btn.addEventListener("click", handleRowAction);
-});
-
   }   // <-- THÊM DẤU } NÀY
-
-  renderTotals(filtered);
 }
 
 function getFilteredRecords() {
@@ -297,16 +294,6 @@ function clearFilters() {
   toDateFilter.value = "";
   render();
 }
-
-function renderTotals(list) {
-  totals.rows.textContent = countUniqueItems(list);
-  totals.a.textContent = formatNumber(countType(list, "vong"));
-  totals.b.textContent = formatNumber(countType(list, "nhan"));
-  totals.c.textContent = formatNumber(countType(list, "mat"));
-  totals.tlh.textContent = formatNumber(countType(list, "bong"));
-  totals.tlv.textContent = formatNumber(countOtherTypes(list));
-}
-
 function countType(list, keyword) {
   return list.filter((item) => normalizeText(item.type).includes(keyword)).length;
 }
@@ -492,7 +479,6 @@ function normalizePulledRecord(item) {
     code: String(item.code || ""),
     type: String(item.type || ""),
     info: String(item.info || ""),
-    imageUrl: String(item.imageUrl || ""),
     entryDate: item.entryDate || new Date().toISOString().slice(0, 10),
     wageA: Number(item.wageA || 0),
     wageB: Number(item.wageB || 0),
@@ -502,6 +488,7 @@ function normalizePulledRecord(item) {
     note: String(item.note || ""),
     imageUrl: String(item.imageUrl || ""),
     updatedAt: item.updatedAt || new Date().toISOString(),
+    status: item.status || "pending",
   };
 }
 
@@ -559,11 +546,6 @@ function formatDate(value) {
   const [year, month, day] = value.split("-");
   return `${day}/${month}/${year}`;
 }
-
-function sum(list, key) {
-  return list.reduce((total, item) => total + Number(item[key] || 0), 0);
-}
-
 function csvCell(value) {
   const text = String(value ?? "");
   return `"${text.replace(/"/g, '""')}"`;
@@ -623,9 +605,6 @@ const res = await fetch(scriptUrl, {
 });
 
 const result = await res.json();
-
-console.log("result =", result);
-
 return result;
 }
 document.addEventListener("click", (e)=>{
@@ -650,7 +629,20 @@ function showImage(src){
   document.getElementById("imgPreview").src = src;
   document.getElementById("imgModal").style.display = "flex";
 }
+function getStatusText(status){
 
+  switch(status){
+
+    case "approved":
+      return "🟢 Đã duyệt";
+
+    case "review":
+      return "🟡 Kiểm tra lại";
+
+    default:
+      return "🔴 Chưa duyệt";
+  }
+}
 function closeImage(){
   document.getElementById("imgModal").style.display = "none";
 }
