@@ -10,23 +10,13 @@ href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%22
 </head>
 <body>
 <header class="topbar">
+  <h1>💎𝒌𝒉𝒐 𝒎𝒂̂̃𝒖💎</h1>
 
-  <div>
-    <h1>💎𝒌𝒉𝒐 𝒎𝒂̂̃𝒖💎</h1>
+  <div class="top-actions">
+    <button id="settingsBtn" type="button">⚙️</button>
+    <button id="pullBtn" type="button">📥</button>
   </div>
-
-<div class="top-actions">
-
-  <button id="settingsBtn">
-    ⚙️
-  </button>
-
-  <button id="pullBtn">
-    📥
-  </button>
-</div>
-  </header>
-
+</header>
   <main class="layout">
     <section class="panel form-panel">
       <div class="panel-title">
@@ -87,65 +77,31 @@ href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%22
   <span>Ghi chú</span>
   <textarea id="note" rows="3" placeholder="Không bắt buộc"></textarea>
 </label>
-
-<label>
+<label class="upload-box" for="imageFile">
   <span>Ảnh sản phẩm</span>
-</label>
-
-<label for="imageFile" class="upload-box">
 
   <input
     type="file"
     id="imageFile"
     accept="image/*">
 
-<div class="upload-content">
-  <div class="upload-icon">📷</div>
-
-  <div id="uploadText">
-    Chọn hoặc kéo ảnh vào
+  <div class="upload-content">
+    <div class="upload-icon">📷</div>
+    <div id="uploadText">
+      Chọn hoặc kéo ảnh vào
+    </div>
   </div>
-
-</div>
-
 </label>
 <div class="save-btn-wrap">
   <button class="primary" type="submit">
     Lưu dữ liệu
   </button>
-
   <div id="toast"></div>
 </div>
-
 </form>
     </section>
 
     <section class="content">
-      <section class="summary" aria-label="Th&#7889;ng k&#234;">
-        <div>
-          <span>S&#7889; h&#224;ng c&#243; m&#7863;t</span>
-          <strong id="totalRows">0</strong>
-        </div>
-        <div>
-          <span>V&#242;ng</span>
-          <strong id="totalA">0</strong>
-        </div>
-        <div>
-          <span>Nh&#7851;n</span>
-          <strong id="totalB">0</strong>
-        </div>
-        <div>
-          <span>M&#7863;t</span>
-          <strong id="totalC">0</strong>
-        </div>
-        <div>
-          <span>B&#244;ng</span>
-          <strong id="totalTlh">0</strong>
-        </div>
-        <div>
-          <span>Kh&#225;c</span>
-          <strong id="totalTlv">0</strong>
-        </div>
       </section>
 
       <section class="panel">
