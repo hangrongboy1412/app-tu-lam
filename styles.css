@@ -163,7 +163,10 @@ textarea:focus {
   align-items: end;
   margin-bottom: 14px;
 }
-
+.row-actions button:first-child{
+  background:#e8f5ee;
+  color:#196b5b;
+}
 .filters label {
   gap: 5px;
 }
