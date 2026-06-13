@@ -3,6 +3,7 @@ const SETTINGS_KEY = "luu-kho-settings-v1";
 let isSaving = false;
 const fields = {
   editingId: document.querySelector("#editingId"),
+  currentImageUrl: document.querySelector("#currentImageUrl"),
   code: document.querySelector("#code"),
   type: document.querySelector("#type"),
   info: document.querySelector("#info"),
@@ -15,6 +16,7 @@ const fields = {
   note: document.querySelector("#note"),
   imageFile: document.querySelector("#imageFile"),
   status: document.querySelector("#status"),
+  
 };
 
 const form = document.querySelector("#stockForm");
@@ -28,18 +30,10 @@ const fromDateFilter = document.querySelector("#fromDateFilter");
 const toDateFilter = document.querySelector("#toDateFilter");
 const clearFiltersBtn = document.querySelector("#clearFiltersBtn");
 const exportCsvBtn = document.querySelector("#exportCsvBtn");
-const syncBtn = document.querySelector("#syncBtn");
-const settingsBtn = document.querySelector("#settingsBtn");
 const pullBtn = document.querySelector("#pullBtn");
+const syncBtn = document.querySelector("#syncBtn");
 const statusText = document.querySelector("#statusText");
-const totals = {
-  rows: document.querySelector("#totalRows"),
-  a: document.querySelector("#totalA"),
-  b: document.querySelector("#totalB"),
-  c: document.querySelector("#totalC"),
-  tlv: document.querySelector("#totalTlv"),
-  tlh: document.querySelector("#totalTlh"),
-};
+const settingsBtn = document.querySelector("#settingsBtn");
 
 let records = loadRecords();
 let settings = loadSettings();
@@ -69,6 +63,9 @@ form.addEventListener("submit", async (event) => {
 
   if (isSaving) return;
   isSaving = true;
+
+ showToast("⏳ Đang lưu...", 30000);
+
   try {
 
     let uploadedImage = "";
@@ -93,9 +90,18 @@ form.addEventListener("submit", async (event) => {
       records.unshift(data);
     }
 
-    saveRecords();
-    resetForm();
-    render();
+const currentY = window.scrollY;
+
+saveRecords();
+resetForm();
+render();
+
+requestAnimationFrame(() => {
+  window.scrollTo(0, currentY);
+});
+
+showToast("✅ Đã lưu thành công", 2000);
+
   } catch (error) {
 
     console.error(error);
@@ -113,18 +119,10 @@ typeFilter.addEventListener("change", render);
 fromDateFilter.addEventListener("change", render);
 toDateFilter.addEventListener("change", render);
 clearFiltersBtn.addEventListener("click", clearFilters);
-exportCsvBtn?.addEventListener("click", exportCsv);
-syncBtn?.addEventListener("click", syncToSheet);
+exportCsvBtn.addEventListener("click", exportCsv);
 pullBtn.addEventListener("click", pullFromSheet);
 settingsBtn.addEventListener("click", saveSettings);
-rowsEl.addEventListener("click", (e) => {
-  const btn = e.target.closest("[data-action]");
-  if (!btn) return;
-
-  handleRowAction({
-    currentTarget: btn
-  });
-});
+syncBtn.addEventListener("click", syncToSheet);
 
 function readForm(imageUrl = "") {
   return {
@@ -132,7 +130,9 @@ function readForm(imageUrl = "") {
     code: fields.code.value.trim(),
     type: fields.type.value.trim(),
     info: fields.info.value.trim(),
-    imageUrl: imageUrl,
+    imageUrl:
+  imageUrl ||
+  fields.currentImageUrl.value,
     entryDate: fields.entryDate.value,
     wageA: parseMoney(fields.wageA.value),
     wageB: parseMoney(fields.wageB.value),
@@ -148,6 +148,7 @@ function resetForm() {
   form.reset();
   fields.imageFile.value = "";
   fields.editingId.value = "";
+  fields.currentImageUrl.value = "";
   fields.entryDate.valueAsDate = new Date();
   formTitle.textContent = "Th\u00eam d\u1eef li\u1ec7u";
 }
@@ -182,15 +183,17 @@ ${
 
   <div class="card-info">
 
-    <div class="card-code">
-      ${escapeHtml(item.code)}
-    </div>
+<div class="card-code">
+  ${escapeHtml(item.code)}
+</div>
+
 <div class="card-status ${item.status || "pending"}">
   ${getStatusText(item.status)}
 </div>
-    <div class="card-meta">
-      ${escapeHtml(item.type)} • ${formatDate(item.entryDate)}
-    </div>
+
+<div class="card-meta">
+  ${escapeHtml(item.type)} • ${formatDate(item.entryDate)}
+</div>
 
     <div class="card-meta">
       Linh: ${formatNumber(item.wageA)}
@@ -223,7 +226,12 @@ ${
   </div>
 `;
     rowsEl.appendChild(card);
-  }   // <-- THÊM DẤU } NÀY
+    card.querySelectorAll("button").forEach(btn => {
+  btn.addEventListener("click", handleRowAction);
+});
+
+  }
+
 }
 
 function getFilteredRecords() {
@@ -294,37 +302,6 @@ function clearFilters() {
   toDateFilter.value = "";
   render();
 }
-function countType(list, keyword) {
-  return list.filter((item) => normalizeText(item.type).includes(keyword)).length;
-}
-
-function countOtherTypes(list) {
-  const knownTypes = ["vong", "nhan", "mat", "bong"];
-  return list.filter((item) => {
-    const type = normalizeText(item.type);
-    return !knownTypes.some((keyword) => type.includes(keyword));
-  }).length;
-}
-
-function normalizeText(value) {
-  return String(value || "")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/g, "d")
-    .replace(/Đ/g, "d")
-    .toLowerCase()
-    .trim();
-}
-
-function countUniqueItems(list) {
-  const codes = new Set();
-  for (const item of list) {
-    const code = String(item.code || "").trim().toLowerCase();
-    codes.add(code || item.id);
-  }
-  return codes.size;
-}
-
 function handleRowAction(event) {
   const id = event.currentTarget.dataset.id;
   const action = event.currentTarget.dataset.action;
@@ -334,6 +311,8 @@ function handleRowAction(event) {
 
   if (action === "edit") {
     fields.editingId.value = item.id;
+    fields.currentImageUrl.value =
+  item.imageUrl || "";
     fields.code.value = item.code;
     fields.type.value = item.type;
     fields.info.value = item.info || "";
@@ -344,6 +323,8 @@ function handleRowAction(event) {
     fields.tlv.value = item.tlv || "";
     fields.tlh.value = item.tlh || "";
     fields.note.value = item.note || "";
+    fields.status.value =
+  item.status || "pending";
     formTitle.textContent = "S\u1eeda d\u1eef li\u1ec7u";
     window.scrollTo({ top: 0, behavior: "smooth" });
     return;
@@ -399,7 +380,7 @@ function loadSettings() {
 }
 
 async function syncToSheet() {
-const scriptUrl = (settings.scriptUrl || "").trim();
+(settings.scriptUrl || "").trim()
   if (!scriptUrl) {
     setStatus("Ch\u01b0a c\u00f3 link Google Apps Script.");
     return;
@@ -420,7 +401,7 @@ const scriptUrl = (settings.scriptUrl || "").trim();
 }
 
 function pullFromSheet() {
-const scriptUrl = (settings.scriptUrl || "").trim();
+(settings.scriptUrl || "").trim()
   if (!scriptUrl) {
     setStatus("Ch\u01b0a c\u00f3 link Google Apps Script.");
     return;
@@ -479,6 +460,7 @@ function normalizePulledRecord(item) {
     code: String(item.code || ""),
     type: String(item.type || ""),
     info: String(item.info || ""),
+    imageUrl: String(item.imageUrl || ""),
     entryDate: item.entryDate || new Date().toISOString().slice(0, 10),
     wageA: Number(item.wageA || 0),
     wageB: Number(item.wageB || 0),
@@ -486,9 +468,7 @@ function normalizePulledRecord(item) {
     tlv: Number(item.tlv || 0),
     tlh: Number(item.tlh || 0),
     note: String(item.note || ""),
-    imageUrl: String(item.imageUrl || ""),
     updatedAt: item.updatedAt || new Date().toISOString(),
-    status: item.status || "pending",
   };
 }
 
@@ -546,6 +526,11 @@ function formatDate(value) {
   const [year, month, day] = value.split("-");
   return `${day}/${month}/${year}`;
 }
+
+function sum(list, key) {
+  return list.reduce((total, item) => total + Number(item[key] || 0), 0);
+}
+
 function csvCell(value) {
   const text = String(value ?? "");
   return `"${text.replace(/"/g, '""')}"`;
@@ -579,7 +564,7 @@ function setStatus(message, time = 2000) {
 
 async function uploadImageToDrive(file) {
 
-const scriptUrl = (settings.scriptUrl || "").trim();
+(settings.scriptUrl || "").trim()
 
   const base64 = await new Promise((resolve) => {
     const reader = new FileReader();
@@ -607,6 +592,14 @@ const res = await fetch(scriptUrl, {
 const result = await res.json();
 return result;
 }
+function showImage(url){
+  const modal = document.getElementById("imgModal");
+  const img = document.getElementById("imgPreview");
+
+  img.src = url;
+  modal.style.display = "flex";
+}
+
 document.addEventListener("click", (e)=>{
   if(e.target.id === "imgModal"){
     e.target.style.display = "none";
@@ -624,10 +617,8 @@ function showToast(text, time = 3000){
     toast.style.display = "none";
   }, time);
 }
-
-function showImage(src){
-  document.getElementById("imgPreview").src = src;
-  document.getElementById("imgModal").style.display = "flex";
+function closeImage(){
+  document.getElementById("imgModal").style.display = "none";
 }
 function getStatusText(status){
 
@@ -643,9 +634,7 @@ function getStatusText(status){
       return "🔴 Chưa duyệt";
   }
 }
-function closeImage(){
-  document.getElementById("imgModal").style.display = "none";
-}
+
 fields.imageFile.addEventListener("change", () => {
 
   const uploadText =
