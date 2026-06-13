@@ -122,6 +122,7 @@ rowsEl.addEventListener("click", (e) => {
   if (!btn) return;
 
   handleRowAction({
+    
     currentTarget: btn
   });
 });
@@ -212,15 +213,19 @@ ${
 
   </div>
 
-  <div class="row-actions">
-    <button data-action="edit" data-id="${item.id}">
-      Sửa
-    </button>
+<div class="row-actions">
+  <button
+    data-action="toggle-status"
+    data-id="${item.id}">
+    ${item.status === "approved"
+      ? "Bỏ duyệt"
+      : "Phê duyệt"}
+  </button>
 
-    <button class="danger" data-action="delete" data-id="${item.id}">
-      Xóa
-    </button>
-  </div>
+  <button class="danger" data-action="delete" data-id="${item.id}">
+    Xóa
+  </button>
+</div>
 `;
     rowsEl.appendChild(card);
   }   // <-- THÊM DẤU } NÀY
@@ -331,7 +336,32 @@ function handleRowAction(event) {
   const item = records.find((record) => record.id === id);
 
   if (!item) return;
+  if (action === "toggle-status") {
 
+  item.status =
+    item.status === "approved"
+      ? "pending"
+      : "approved";
+
+  saveRecords();
+  render();
+
+  syncToSheet(); // thêm dòng này
+
+  return;
+}
+if (action === "toggle-status") {
+
+  item.status =
+    item.status === "approved"
+      ? "pending"
+      : "approved";
+
+  saveRecords();
+  render();
+
+  return;
+}
   if (action === "edit") {
     fields.editingId.value = item.id;
     fields.code.value = item.code;
